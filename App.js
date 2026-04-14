@@ -7,6 +7,8 @@ import { CartProvider, useCart } from './utils/CartContext';
 import HomeScreen from './app/HomeScreen';
 import DetailScreen from './app/DetailScreen';
 import CartScreen from './app/CartScreen';
+import TrackingScreen from './app/TrackingScreen';
+import OrdersScreen from './app/OrdersScreen';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -71,6 +73,13 @@ function HomeTabs() {
           tabBarIcon: ({ color }) => <CartTabIcon color={color} />,
         }}
       />
+      <Tab.Screen
+        name="Pesanan"
+        component={OrdersScreen}
+        options={{
+          tabBarIcon: ({ color }) => <Text style={{ fontSize: 22, color }}>📦</Text>,
+        }}
+      />
     </Tab.Navigator>
   );
 }
@@ -82,6 +91,7 @@ export default function App() {
         <Stack.Navigator screenOptions={{ headerShown: false }}>
           <Stack.Screen name="Main" component={HomeTabs} />
           <Stack.Screen name="Detail" component={DetailScreen} />
+          <Stack.Screen name="Tracking" component={TrackingScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </CartProvider>

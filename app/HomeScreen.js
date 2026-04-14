@@ -8,6 +8,7 @@ import {
   StyleSheet,
   StatusBar,
   SafeAreaView,
+  TextInput,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { categories, banners, products } from '../data/products';
@@ -56,21 +57,29 @@ export default function HomeScreen() {
   const navigation = useNavigation();
   const { totalItems } = useCart();
   const [selectedCategory, setSelectedCategory] = useState('all');
+  const [searchQuery, setSearchQuery] = useState('');
   const [loading, setLoading] = useState(true);
   const [filteredProducts, setFilteredProducts] = useState([]);
 
   useEffect(() => {
     setLoading(true);
     const timer = setTimeout(() => {
-      const result =
+      let result =
         selectedCategory === 'all'
           ? products
           : products.filter((p) => p.category === selectedCategory);
+          
+      if (searchQuery.trim() !== '') {
+        result = result.filter((p) => 
+          p.name.toLowerCase().includes(searchQuery.toLowerCase())
+        );
+      }
+      
       setFilteredProducts(result);
       setLoading(false);
-    }, 2000);
+    }, 400); // 400ms loading delay
     return () => clearTimeout(timer);
-  }, [selectedCategory]);
+  }, [selectedCategory, searchQuery]);
 
   const renderHeader = () => (
     <View>
@@ -87,9 +96,16 @@ export default function HomeScreen() {
         </TouchableOpacity>
       </View>
 
-      {/* Search Bar (decorative) */}
+      {/* Search Bar */}
       <View style={styles.searchBar}>
-        <Text style={styles.searchPlaceholder}>🔍  Cari produk...</Text>
+        <Text style={styles.searchIcon}>🔍</Text>
+        <TextInput
+          style={styles.searchInput}
+          placeholder="Cari produk..."
+          placeholderTextColor="#999"
+          value={searchQuery}
+          onChangeText={setSearchQuery}
+        />
       </View>
 
       {/* Banner Promo */}
@@ -130,32 +146,29 @@ export default function HomeScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="dark-content" backgroundColor="#FAFAFA" />
-      {loading ? (
-        <View style={styles.loadingContainer}>
-          {renderHeader()}
-          <View style={styles.loadingBox}>
-            <ActivityIndicator size="large" color="#6C63FF" />
-            <Text style={styles.loadingText}>Memuat produk...</Text>
-          </View>
-        </View>
-      ) : (
-        <FlatList
-          data={filteredProducts}
-          keyExtractor={(item) => item.id}
-          numColumns={2}
-          ListHeaderComponent={renderHeader}
-          renderItem={({ item }) => (
-            <ProductCard item={item} onPress={(p) => navigation.navigate('Detail', { product: p })} />
-          )}
-          contentContainerStyle={styles.productGrid}
-          showsVerticalScrollIndicator={false}
-          ListEmptyComponent={
-            <View style={styles.emptyContainer}>
-              <Text style={styles.emptyText}>😅 Tidak ada produk di kategori ini</Text>
+      <FlatList
+        data={loading ? [] : filteredProducts}
+        keyExtractor={(item) => item.id}
+        numColumns={2}
+        ListHeaderComponent={renderHeader()}
+        renderItem={({ item }) => (
+          <ProductCard item={item} onPress={(p) => navigation.navigate('Detail', { product: p })} />
+        )}
+        contentContainerStyle={[styles.productGrid, { flexGrow: 1 }]}
+        showsVerticalScrollIndicator={false}
+        ListEmptyComponent={
+          loading ? (
+            <View style={[styles.loadingBox, { marginTop: 40 }]}>
+              <ActivityIndicator size="large" color="#6C63FF" />
+              <Text style={styles.loadingText}>Memuat produk...</Text>
             </View>
-          }
-        />
-      )}
+          ) : (
+            <View style={styles.emptyContainer}>
+              <Text style={styles.emptyText}>😅 Tidak ada produk yang cocok</Text>
+            </View>
+          )
+        }
+      />
     </SafeAreaView>
   );
 }
@@ -204,16 +217,23 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
   searchBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
     marginHorizontal: 16,
     marginBottom: 12,
     backgroundColor: '#EFEFEF',
     borderRadius: 12,
     paddingHorizontal: 16,
-    paddingVertical: 12,
+    height: 46,
   },
-  searchPlaceholder: {
-    color: '#999',
+  searchIcon: {
+    fontSize: 16,
+    marginRight: 8,
+  },
+  searchInput: {
+    flex: 1,
     fontSize: 14,
+    color: '#2D2D2D',
   },
   bannerList: {
     paddingHorizontal: 16,

@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import { useCart } from '../utils/CartContext';
 import { formatRupiah } from '../utils/formatRupiah';
+import { useNavigation } from '@react-navigation/native';
 
 function CartItem({ item, onRemove }) {
   return (
@@ -36,7 +37,8 @@ function CartItem({ item, onRemove }) {
 }
 
 export default function CartScreen() {
-  const { cartItems, removeFromCart, totalPrice, totalItems } = useCart();
+  const { cartItems, removeFromCart, clearCart, addOrder, totalPrice, totalItems } = useCart();
+  const navigation = useNavigation();
 
   const handleCheckout = () => {
     if (cartItems.length === 0) return;
@@ -45,7 +47,27 @@ export default function CartScreen() {
       `Total pembayaran: ${formatRupiah(totalPrice)}\n\nLanjutkan ke pembayaran?`,
       [
         { text: 'Batal', style: 'cancel' },
-        { text: 'Bayar Sekarang', onPress: () => Alert.alert('✅ Pesanan Diterima!', 'Terima kasih sudah berbelanja di TokoKita! 🛒') },
+        { 
+          text: 'Bayar Sekarang', 
+          onPress: () => {
+            Alert.alert(
+              '✅ Pesanan Diterima!', 
+              'Terima kasih sudah berbelanja di TokoKita! 🛒',
+              [
+                {
+                  text: 'Lacak Pesanan',
+                  onPress: () => {
+                    const items = [...cartItems];
+                    const total = totalPrice;
+                    addOrder(items, total);
+                    clearCart();
+                    navigation.navigate('Tracking', { items, total });
+                  }
+                }
+              ]
+            )
+          }
+        },
       ]
     );
   };

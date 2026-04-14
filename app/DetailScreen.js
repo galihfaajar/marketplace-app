@@ -54,7 +54,7 @@ export default function DetailScreen() {
                 { text: "Lanjut Belanja", style: "cancel" },
                 {
                   text: "Lihat Keranjang",
-                  onPress: () => navigation.navigate("Cart"),
+                  onPress: () => navigation.navigate("Main", { screen: "Cart" }),
                 },
               ],
             );
