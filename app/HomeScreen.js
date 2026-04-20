@@ -9,6 +9,7 @@ import {
   StatusBar,
   SafeAreaView,
   TextInput,
+  Image,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { categories, banners, products } from '../data/products';
@@ -41,7 +42,11 @@ function ProductCard({ item, onPress }) {
   return (
     <TouchableOpacity style={styles.productCard} onPress={() => onPress(item)} activeOpacity={0.85}>
       <View style={[styles.productImage, { backgroundColor: item.color }]}>
-        <Text style={styles.productEmoji}>🛍️</Text>
+        {item.image ? (
+          <Image source={item.image} style={styles.imageFull} />
+        ) : (
+          <Text style={styles.productEmoji}>🛍️</Text>
+        )}
       </View>
       <View style={styles.productInfo}>
         <Text style={styles.productName} numberOfLines={2}>{item.name}</Text>
@@ -307,6 +312,12 @@ const styles = StyleSheet.create({
     height: 120,
     justifyContent: 'center',
     alignItems: 'center',
+    overflow: 'hidden',
+  },
+  imageFull: {
+    width: '100%',
+    height: '100%',
+    resizeMode: 'cover',
   },
   productEmoji: {
     fontSize: 40,

@@ -8,6 +8,7 @@ import {
   Text,
   TouchableOpacity,
   View,
+  Image,
 } from "react-native";
 import { useCart } from "../utils/CartContext";
 import { formatRupiah } from "../utils/formatRupiah";
@@ -80,7 +81,11 @@ export default function DetailScreen() {
 
       {/* Product Image Hero */}
       <View style={[styles.heroImage, { backgroundColor: product.color }]}>
-        <Text style={styles.heroEmoji}>🛍️</Text>
+        {product.image ? (
+          <Image source={product.image} style={styles.imageFull} />
+        ) : (
+          <Text style={styles.heroEmoji}>🛍️</Text>
+        )}
       </View>
 
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
@@ -169,9 +174,14 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
   heroImage: {
-    height: 220,
+    height: 250,
     justifyContent: "center",
     alignItems: "center",
+  },
+  imageFull: {
+    width: "100%",
+    height: "100%",
+    resizeMode: "cover",
   },
   heroEmoji: {
     fontSize: 80,

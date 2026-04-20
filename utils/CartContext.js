@@ -26,7 +26,7 @@ export function CartProvider({ children }) {
     setCartItems([]);
   };
 
-  const addOrder = (items, total) => {
+  const addOrder = (items, total) => {6
     const newOrder = {
       id: Math.random().toString(36).substr(2, 9),
       date: new Date().toISOString(),

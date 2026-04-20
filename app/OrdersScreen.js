@@ -7,6 +7,7 @@ import {
   StyleSheet,
   SafeAreaView,
   StatusBar,
+  Image,
 } from 'react-native';
 import { useCart } from '../utils/CartContext';
 import { formatRupiah } from '../utils/formatRupiah';
@@ -24,8 +25,12 @@ function OrderCard({ order, onPress }) {
   return (
     <TouchableOpacity style={styles.card} onPress={onPress} activeOpacity={0.8}>
       <View style={styles.cardHeader}>
-        <View style={styles.boxIcon}>
-          <Text style={styles.boxEmoji}>📦</Text>
+        <View style={[styles.boxIcon, { backgroundColor: order.items[0]?.color || '#F0EEFF' }]}>
+          {order.items.length > 0 && order.items[0].image ? (
+            <Image source={order.items[0].image} style={styles.imageFull} />
+          ) : (
+            <Text style={styles.boxEmoji}>📦</Text>
+          )}
         </View>
         <View style={styles.headerInfo}>
           <Text style={styles.orderId}>Pesanan #{order.id}</Text>
@@ -156,6 +161,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 12,
+    overflow: 'hidden',
+  },
+  imageFull: {
+    width: '100%',
+    height: '100%',
+    resizeMode: 'cover',
   },
   boxEmoji: {
     fontSize: 20,

@@ -8,6 +8,7 @@ import {
   Alert,
   SafeAreaView,
   StatusBar,
+  Image,
 } from 'react-native';
 import { useCart } from '../utils/CartContext';
 import { formatRupiah } from '../utils/formatRupiah';
@@ -17,7 +18,11 @@ function CartItem({ item, onRemove }) {
   return (
     <View style={styles.cartItem}>
       <View style={[styles.itemImage, { backgroundColor: item.color }]}>
-        <Text style={styles.itemEmoji}>🛍️</Text>
+        {item.image ? (
+          <Image source={item.image} style={styles.imageFull} />
+        ) : (
+          <Text style={styles.itemEmoji}>🛍️</Text>
+        )}
       </View>
       <View style={styles.itemDetails}>
         <Text style={styles.itemName} numberOfLines={2}>{item.name}</Text>
@@ -189,6 +194,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 12,
+    overflow: 'hidden',
+  },
+  imageFull: {
+    width: '100%',
+    height: '100%',
+    resizeMode: 'cover',
   },
   itemEmoji: {
     fontSize: 30,
